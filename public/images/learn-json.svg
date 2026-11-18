@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">How a JSON parser turns text into a value tree</title>
+  <desc id="d">Three stages left to right: JSON text as a byte sequence, the RFC 8259 grammar applied by a parser, and the resulting value tree of objects, arrays and scalars, with the places where precision is lost marked.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">From bytes to a value tree — and where information goes missing</text>
+  <text x="40" y="82" class="b">RFC 8259 defines the grammar in the middle panel. Everything on the right is a consequence of that grammar, not of the text you wrote.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · JSON TEXT</text>
+  <rect x="64" y="172" width="282" height="150" class="tint" />
+  <text x="80" y="200" class="m">{</text>
+  <text x="80" y="224" class="m">  "id": 9007199254740993,</text>
+  <text x="80" y="248" class="m">  "tags": ["a", "b"],</text>
+  <text x="80" y="272" class="m">  "ok": true,</text>
+  <text x="80" y="296" class="m">  "at": null</text>
+  <text x="80" y="320" class="m">}</text>
+  <text x="64" y="356" class="ms">19 Unicode code points of structure,</text>
+  <text x="64" y="376" class="ms">the rest is data. Order is significant</text>
+  <text x="64" y="396" class="ms">in arrays, not in objects.</text>
+  <rect x="64" y="414" width="282" height="38" class="warn" />
+  <text x="80" y="438" class="w">Text keeps every digit you typed</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · GRAMMAR</text>
+  <text x="459" y="182" class="ms">JSON text = WS value WS</text>
+  <text x="459" y="206" class="ms">value = object | array | string</text>
+  <text x="475" y="224" class="ms">| number | true | false | null</text>
+  <text x="459" y="252" class="ms">number = [ "-" ] int [ frac ] [ exp ]</text>
+  <text x="459" y="276" class="ms">int = "0" | digit1-9 *DIGIT</text>
+  <text x="459" y="300" class="ms">string = quotation-mark *char mark</text>
+  <text x="459" y="324" class="ms">object = "{" *( member ", " ) "}"</text>
+  <text x="459" y="348" class="ms">member = string ":" value</text>
+  <rect x="459" y="368" width="282" height="84" class="warn" />
+  <text x="475" y="394" class="w">Not allowed: comments, trailing</text>
+  <text x="475" y="414" class="w">commas, NaN, Infinity, single</text>
+  <text x="475" y="434" class="w">quotes, 01, .5, 1., control chars</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · VALUE TREE</text>
+  <rect x="854" y="170" width="282" height="34" class="tint" />
+  <text x="868" y="192" class="m">object (5 members)</text>
+  <text x="884" y="230" class="ms">id</text>
+  <rect x="930" y="212" width="206" height="28" class="chip" />
+  <text x="944" y="231" class="ms">number → 9007199254740992</text>
+  <text x="884" y="266" class="ms">tags</text>
+  <rect x="930" y="248" width="206" height="28" class="chip" />
+  <text x="944" y="267" class="ms">array [ "a", "b" ]</text>
+  <text x="884" y="302" class="ms">ok</text>
+  <rect x="930" y="284" width="206" height="28" class="chip" />
+  <text x="944" y="303" class="ms">true</text>
+  <text x="884" y="338" class="ms">at</text>
+  <rect x="930" y="320" width="206" height="28" class="chip" />
+  <text x="944" y="339" class="ms">null</text>
+  <rect x="854" y="360" width="282" height="92" class="warn" />
+  <text x="868" y="384" class="w">Lost: the 17th digit of id when the</text>
+  <text x="868" y="404" class="w">parser returns an IEEE-754 double.</text>
+  <text x="868" y="424" class="w">Lost: duplicate keys, unless the</text>
+  <text x="868" y="444" class="w">parser keeps both members.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="585" y="500" class="ms">parse</text>
+  <text x="1000" y="500" class="ms">serialise</text>
+</svg>

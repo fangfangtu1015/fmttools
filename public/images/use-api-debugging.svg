@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">Order of operations for debugging an HTTP API response</title>
+  <desc id="d">A five step flow from left to right: read the status and the authentication challenge, read the encoding claims against the bytes received, check the query string escaping, reshape the body, then open any base64 or base64url field inside it. Each step lists the symptom that sends you to the next one.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">Headers first, body second, nested payloads last</text>
+  <text x="40" y="82" class="b">Every step answers one question with evidence you can quote in a bug report. Skipping ahead is how an encoding artefact gets filed as a server bug.</text>
+
+  <!-- step 1 -->
+  <rect x="40" y="112" width="212" height="300" class="card" />
+  <text x="58" y="148" class="k">1 · STATUS</text>
+  <text x="58" y="176" class="m">401 vs 403</text>
+  <text x="58" y="200" class="ms">WWW-Authenticate</text>
+  <text x="58" y="220" class="ms">present or absent</text>
+  <rect x="58" y="238" width="176" height="60" class="tint" />
+  <text x="70" y="262" class="ms">401: no valid</text>
+  <text x="70" y="282" class="ms">credentials sent</text>
+  <rect x="58" y="308" width="176" height="60" class="chip" />
+  <text x="70" y="332" class="ms">403: credentials</text>
+  <text x="70" y="352" class="ms">refused for this</text>
+  <text x="58" y="392" class="w">Body is a hint, not the cause</text>
+
+  <!-- step 2 -->
+  <rect x="284" y="112" width="212" height="300" class="card" />
+  <text x="302" y="148" class="k">2 · ENCODING</text>
+  <text x="302" y="176" class="m">content-encoding</text>
+  <text x="302" y="200" class="m">content-type charset</text>
+  <rect x="302" y="216" width="176" height="82" class="warn" />
+  <text x="314" y="240" class="w">Header claims gzip,</text>
+  <text x="314" y="260" class="ms">bytes start 1f 8b</text>
+  <text x="314" y="280" class="ms">then nothing was</text>
+  <text x="314" y="296" class="ms">decoded yet</text>
+  <text x="302" y="326" class="ms">content-length counts</text>
+  <text x="302" y="346" class="ms">the encoded form</text>
+  <text x="302" y="376" class="ms">JSON is UTF-8 by</text>
+  <text x="302" y="396" class="ms">spec: charset is noise</text>
+
+  <!-- step 3 -->
+  <rect x="528" y="112" width="212" height="300" class="card" />
+  <text x="546" y="148" class="k">3 · QUERY</text>
+  <text x="546" y="176" class="m">q=hello%2520world</text>
+  <rect x="546" y="192" width="176" height="66" class="tint" />
+  <text x="558" y="216" class="ms">decode once sees</text>
+  <text x="558" y="236" class="ms">hello%20world,</text>
+  <text x="558" y="252" class="ms">not hello world</text>
+  <text x="546" y="284" class="ms">plus as space:</text>
+  <text x="546" y="304" class="m">q=C++  gives "C  "</text>
+  <text x="546" y="330" class="ms">repeated keys are</text>
+  <text x="546" y="350" class="ms">undefined by RFC 3986</text>
+  <text x="546" y="386" class="w">Never decode twice</text>
+
+  <!-- step 4 -->
+  <rect x="772" y="112" width="180" height="300" class="card" />
+  <text x="790" y="148" class="k">4 · SHAPE</text>
+  <text x="790" y="176" class="m">one 2 MB line</text>
+  <rect x="790" y="192" width="144" height="86" class="chip" />
+  <text x="802" y="216" class="ms">pretty print and</text>
+  <text x="802" y="236" class="ms">read depth, member</text>
+  <text x="802" y="256" class="ms">count, largest</text>
+  <text x="802" y="272" class="ms">array length</text>
+  <text x="790" y="302" class="ms">more than one top</text>
+  <text x="790" y="322" class="ms">level value means</text>
+  <text x="790" y="342" class="ms">NDJSON, not broken</text>
+  <text x="790" y="362" class="ms">JSON</text>
+  <text x="790" y="392" class="w">Key order is data</text>
+
+  <!-- step 5 -->
+  <rect x="984" y="112" width="176" height="300" class="card" />
+  <text x="1002" y="148" class="k">5 · PAYLOADS</text>
+  <text x="1002" y="176" class="m">avatar, token, blob</text>
+  <rect x="1002" y="192" width="140" height="86" class="tint" />
+  <text x="1014" y="216" class="ms">decode, then read</text>
+  <text x="1014" y="236" class="ms">the leading bytes</text>
+  <text x="1014" y="256" class="ms">89 50 4E 47 is a</text>
+  <text x="1014" y="272" class="ms">PNG whatever</text>
+  <text x="1002" y="302" class="ms">says the field</text>
+  <text x="1002" y="322" class="ms">name or the</text>
+  <text x="1002" y="342" class="ms">declared media type</text>
+  <text x="1002" y="386" class="w">Readably encoded is</text>
+  <text x="1002" y="402" class="w">not secret</text>
+
+  <path d="M252 262 H284" class="arrow" />
+  <path d="M496 262 H528" class="arrow" />
+  <path d="M740 262 H772" class="arrow" />
+  <path d="M952 262 H984" class="arrow" />
+
+  <rect x="40" y="432" width="1120" height="66" class="card" />
+  <text x="58" y="460" class="ms">Escalate the moment the evidence stops matching: a 401 with no challenge is a gateway, a body that starts with 1f 8b under a JSON content type is a double encoding, and a field that decodes to non UTF-8 bytes is binary, not text.</text>
+  <text x="58" y="484" class="w">Quote the header line, the byte offsets and the decoded length. Those three are reproducible; "it looks wrong" is not.</text>
+</svg>

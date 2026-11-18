@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">From a raw structured log file to one analysable JSON array</title>
+  <desc id="d">Three stages left to right: a log file of newline-delimited JSON records with one fused line and one truncated line, the validator diagnostics that a JSON parser reports for that file, and the wrapped array that a repair step produces, annotated with the number precision that is lost on the way.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">From one log file to one analysable JSON array</text>
+  <text x="40" y="82" class="b">Every line is a complete JSON value. The file itself is not — RFC 8259 §2 allows exactly one top-level value.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · THE FILE</text>
+  <rect x="64" y="172" width="282" height="188" class="tint" />
+  <text x="80" y="196" class="ms">{ "ts": "…01.482Z", "level": …</text>
+  <text x="80" y="218" class="ms">{ "ts": "…01.519Z", "level": …</text>
+  <text x="80" y="240" class="ms">{ "ts": 1794219721544, …</text>
+  <text x="80" y="262" class="ms">}{"ts": "…01.602Z", …   ← fused</text>
+  <text x="80" y="284" class="ms">{ "ts": "…+01:00", "svc":</text>
+  <text x="80" y="306" class="ms">                            ← cut</text>
+  <text x="80" y="336" class="ms">newline-delimited, no [ ]</text>
+  <rect x="64" y="376" width="282" height="76" class="warn" />
+  <text x="80" y="400" class="w">Two workers wrote to one fd</text>
+  <text x="80" y="420" class="w">without O_APPEND, and logrotate</text>
+  <text x="80" y="440" class="w">closed the writer mid-record.</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · THE DIAGNOSTICS</text>
+  <rect x="459" y="172" width="282" height="96" class="chip" />
+  <text x="473" y="196" class="ms">error multiple-values</text>
+  <text x="473" y="218" class="ms">line 2, column 1:</text>
+  <text x="473" y="240" class="ms">More than one value at the</text>
+  <text x="473" y="260" class="ms">top level.</text>
+  <text x="459" y="292" class="ms">Line 1 alone parses clean. Line 5 alone</text>
+  <text x="459" y="312" class="ms">reports unterminated-string at column 61.</text>
+  <text x="459" y="332" class="ms">A split record reports unquoted-key.</text>
+  <rect x="459" y="352" width="282" height="100" class="warn" />
+  <text x="473" y="376" class="w">The error is at line 2 because</text>
+  <text x="473" y="396" class="w">the parser finished value 1 and</text>
+  <text x="473" y="416" class="w">found another one. It is not a</text>
+  <text x="473" y="436" class="w">syntax error in your record.</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · THE ARRAY</text>
+  <rect x="854" y="172" width="282" height="150" class="tint" />
+  <text x="868" y="196" class="ms">[</text>
+  <text x="868" y="218" class="ms">  { "ts": "…", 5 keys },</text>
+  <text x="868" y="240" class="ms">  { "ts": "…", 5 keys },</text>
+  <text x="868" y="262" class="ms">  { "ts": 1794…, 6 keys },</text>
+  <text x="868" y="284" class="ms">  { … "cache miss" },</text>
+  <text x="868" y="306" class="ms">  { … "q=lenovo" }</text>
+  <text x="868" y="318" class="ms">]</text>
+  <text x="854" y="344" class="ms">5 values collected, 1 fix, 0 errors.</text>
+  <text x="854" y="364" class="ms">Now sortable: filter by level, sort by ts.</text>
+  <rect x="854" y="380" width="282" height="72" class="warn" />
+  <text x="868" y="404" class="w">Lost here: order_id</text>
+  <text x="868" y="424" class="w">9007199254740993 became</text>
+  <text x="868" y="444" class="w">…992 when the value passed a double.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="378" y="490" class="ms">validate</text>
+  <text x="772" y="490" class="ms">wrap + repair</text>
+  <text x="64" y="510" class="ms">Same input, three different questions: is it valid, what breaks it, and can I put it in a table?</text>
+</svg>

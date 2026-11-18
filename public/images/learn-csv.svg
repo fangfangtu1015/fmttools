@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">How a CSV parser reads bytes through a state machine and where a spreadsheet destroys the values</title>
+  <desc id="d">Three stages left to right: the raw bytes of a CSV file including a byte order mark, CRLF markers, a quoted field containing a comma and an escaped double quote; the four-state character machine that RFC 4180 quoting requires, which a comma split cannot implement; and the resulting records, annotated with the Excel coercions that follow: fifteen significant digits, date rewriting of gene-like tokens and leading zeros dropped.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">Three bytes, four states, and two ways to lose the value</text>
+  <text x="40" y="82" class="b">RFC 4180 rule 6 makes quoting a state machine, not a split. The damage on the right happens after a correct parse.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · BYTES ON DISK</text>
+  <rect x="64" y="172" width="282" height="128" class="tint" />
+  <text x="78" y="196" class="ms">EF BB BF  id,note,amount CRLF</text>
+  <text x="78" y="218" class="m">1,He said "hi",42 CRLF</text>
+  <text x="78" y="240" class="m">2,"a,b",7 CRLF</text>
+  <text x="78" y="262" class="m">3,"line one</text>
+  <text x="78" y="284" class="m">  line two",0 CRLF</text>
+  <text x="64" y="324" class="ms">The BOM is EF BB BF, three bytes that</text>
+  <text x="64" y="344" class="ms">are not part of the first header name.</text>
+  <rect x="64" y="362" width="282" height="86" class="warn" />
+  <text x="78" y="386" class="w">A comma split finds 3, 3, 3 and 4</text>
+  <text x="78" y="406" class="w">fields on those lines. A real parser</text>
+  <text x="78" y="426" class="w">finds 3, 3, 3, 3 — and one record</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · CHARACTER STATE MACHINE</text>
+  <rect x="459" y="172" width="130" height="42" class="chip" />
+  <text x="471" y="198" class="ms">start of field</text>
+  <rect x="620" y="172" width="121" height="42" class="chip" />
+  <text x="630" y="198" class="ms">unquoted field</text>
+  <rect x="459" y="248" width="130" height="42" class="chip" />
+  <text x="471" y="274" class="ms">inside quotes</text>
+  <rect x="620" y="248" width="121" height="42" class="chip" />
+  <text x="628" y="274" class="ms">after quote</text>
+  <path d="M589 193 H620" class="arrow" />
+  <path d="M680 214 V248" class="arrow" />
+  <path d="M620 269 H589" class="arrow" />
+  <path d="M524 214 V248" class="line" />
+  <path d="M524 248 V214" class="arrow" />
+  <text x="459" y="316" class="ms">" at field start → quoted;</text>
+  <text x="459" y="336" class="ms">"" inside quotes → one ";</text>
+  <text x="459" y="356" class="ms">delimiter or CRLF only ends</text>
+  <text x="459" y="376" class="ms">a field outside quotes;</text>
+  <text x="459" y="396" class="ms">text after a closing quote is</text>
+  <text x="459" y="416" class="ms">legal in the wild, not in §2.</text>
+  <rect x="459" y="428" width="282" height="30" class="warn" />
+  <text x="471" y="448" class="w">Escaping is doubling, not a backslash</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · RECORDS, THEN EXCEL</text>
+  <rect x="854" y="170" width="282" height="30" class="tint" />
+  <text x="866" y="190" class="ms">id · note · amount  (3 columns)</text>
+  <rect x="854" y="206" width="282" height="30" class="chip" />
+  <text x="866" y="226" class="ms">"1" · He said "hi" · "42"</text>
+  <rect x="854" y="242" width="282" height="30" class="chip" />
+  <text x="866" y="262" class="ms">"2" · a,b · "7"</text>
+  <rect x="854" y="278" width="282" height="30" class="chip" />
+  <text x="866" y="298" class="ms">"3" · line one LF line two · "0"</text>
+  <text x="854" y="330" class="ms">Every cell is text until a reader</text>
+  <text x="854" y="348" class="ms">decides otherwise. Nothing in the</text>
+  <text x="854" y="366" class="ms">file records that decision.</text>
+  <rect x="854" y="382" width="282" height="72" class="warn" />
+  <text x="866" y="404" class="w">Double-clicking then re-saving keeps</text>
+  <text x="866" y="424" class="w">15 significant digits, drops leading</text>
+  <text x="866" y="444" class="w">zeros and turns MARCH1 into 1-Mar.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="560" y="500" class="ms">RFC 4180 parse</text>
+  <text x="960" y="500" class="ms">uncontrolled re-import</text>
+</svg>

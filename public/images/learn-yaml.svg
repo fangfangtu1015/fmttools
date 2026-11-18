@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">How a YAML parser turns a plain scalar into a typed value</title>
+  <desc id="d">Three stages left to right: YAML text containing the scalars NO, 0755, 12:30, 1.10 and 2024-01-15, the schema resolution table that matches each plain scalar against regular expressions, and the resulting typed value tree, which differs between the YAML 1.1 type repository and the YAML 1.2 core schema.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">From plain text to a typed value — and the two answers</text>
+  <text x="40" y="82" class="b">Nothing in YAML syntax marks a type. The schema in the middle panel decides, and two schemas shipped in 2005 and 2009 disagree.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · YAML TEXT</text>
+  <rect x="64" y="172" width="282" height="170" class="tint" />
+  <text x="80" y="200" class="m">country: NO</text>
+  <text x="80" y="224" class="m">mode: 0755</text>
+  <text x="80" y="248" class="m">start: 12:30</text>
+  <text x="80" y="272" class="m">version: 1.10</text>
+  <text x="80" y="296" class="m">built: 2024-01-15</text>
+  <text x="80" y="320" class="m">size: 1_000</text>
+  <text x="64" y="360" class="ms">Six unquoted scalars. No quotes,</text>
+  <text x="64" y="380" class="ms">no tags, no type markers — the</text>
+  <text x="64" y="400" class="ms">file itself does not say what any</text>
+  <text x="64" y="420" class="ms">of them are.</text>
+  <rect x="64" y="432" width="282" height="34" class="warn" />
+  <text x="80" y="454" class="w">Indent with tabs and you get</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · SCHEMA RESOLUTION</text>
+  <text x="459" y="180" class="ms">first match wins, per plain scalar:</text>
+  <rect x="459" y="192" width="282" height="26" class="chip" />
+  <text x="473" y="210" class="ms">null | Null | NULL | ~        → !!null</text>
+  <rect x="459" y="222" width="282" height="26" class="chip" />
+  <text x="473" y="240" class="ms">true | false (1.1: +y/n/on/off)</text>
+  <rect x="459" y="252" width="282" height="26" class="chip" />
+  <text x="473" y="270" class="ms">[-+]?[0-9]+                → !!int</text>
+  <rect x="459" y="282" width="282" height="26" class="chip" />
+  <text x="473" y="300" class="ms">0o… / 0x…                  → !!int</text>
+  <rect x="459" y="312" width="282" height="26" class="chip" />
+  <text x="473" y="330" class="ms">digits . digits [e+-]      → !!float</text>
+  <rect x="459" y="342" width="282" height="26" class="chip" />
+  <text x="473" y="360" class="ms">*                        → !!str</text>
+  <rect x="459" y="380" width="282" height="86" class="warn" />
+  <text x="473" y="404" class="w">1.1 adds: 0755 octal, 12:30 base 60,</text>
+  <text x="473" y="424" class="w">1_000 separators, 2024-01-15 as</text>
+  <text x="473" y="444" class="w">!!timestamp. 1.2 core adds none.</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · TWO VALUE TREES</text>
+  <text x="854" y="178" class="ms">same file, two resolvers:</text>
+  <rect x="854" y="190" width="282" height="128" class="tint" />
+  <text x="868" y="212" class="ms">YAML 1.1 (libyaml, PyYAML)</text>
+  <text x="868" y="234" class="m">country: false</text>
+  <text x="868" y="254" class="m">mode: 493</text>
+  <text x="868" y="274" class="m">start: 750</text>
+  <text x="868" y="294" class="m">version: 1.1   built: timestamp</text>
+  <rect x="854" y="326" width="282" height="108" class="warn" />
+  <text x="868" y="348" class="ms">YAML 1.2 core (this site, go-yaml v3)</text>
+  <text x="868" y="370" class="m">country: "NO"</text>
+  <text x="868" y="390" class="m">mode: "0755"  start: "12:30"</text>
+  <text x="868" y="410" class="m">version: 1.1  built: "2024-01-15"</text>
+  <text x="868" y="428" class="m">size: "1_000"</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="392" y="284" class="ms">resolve</text>
+  <text x="787" y="284" class="ms">construct</text>
+  <text x="40" y="500" class="ms">Quoting a scalar removes it from the resolver entirely: "NO", "0755" and "12:30" are strings in every schema, in every library, forever.</text>
+</svg>

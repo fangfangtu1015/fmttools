@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">How Base64 turns three bytes into four characters</title>
+  <desc id="d">Three stages left to right: the octets for the text Man written in binary, the twenty-four bits regrouped into four six-bit indices, and those indices looked up in the RFC 4648 alphabet to produce TWFu, with the padding rule and the leftover-bit rule marked.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">Three octets in, four characters out</text>
+  <text x="40" y="82" class="b">RFC 4648 section 4: regroup the bits six at a time, then read each index off the alphabet. Nothing is compressed and nothing is hidden.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · OCTETS IN</text>
+  <rect x="64" y="172" width="282" height="118" class="tint" />
+  <text x="80" y="200" class="m">M  0x4D  01001101</text>
+  <text x="80" y="226" class="m">a  0x61  01100001</text>
+  <text x="80" y="252" class="m">n  0x6E  01101110</text>
+  <text x="80" y="278" class="ms">3 bytes = 24 bits</text>
+  <text x="64" y="316" class="ms">Group size is 3 bytes because 8 and 6</text>
+  <text x="64" y="336" class="ms">share a lowest common multiple of 24.</text>
+  <rect x="64" y="354" width="282" height="98" class="warn" />
+  <text x="80" y="380" class="w">A tail of 1 or 2 bytes still needs 24</text>
+  <text x="80" y="400" class="w">bits: zero bits are appended, then the</text>
+  <text x="80" y="420" class="w">missing output positions become "="</text>
+  <text x="80" y="444" class="ms">so length is 4 x ceiling(n / 3)</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · REGROUP BY SIX</text>
+  <rect x="459" y="172" width="282" height="66" class="tint" />
+  <text x="472" y="196" class="ms">010011010110000101101110</text>
+  <text x="472" y="222" class="m">010011 010110 000101 101110</text>
+  <text x="459" y="266" class="ms">index   19     22      5     46</text>
+  <rect x="459" y="284" width="282" height="86" class="chip" />
+  <text x="474" y="308" class="ms">19 = (0x4D shr 2)</text>
+  <text x="474" y="330" class="ms">22 = ((0x4D and 3) shl 4) or (0x61 shr 4)</text>
+  <text x="474" y="352" class="ms">5  = ((0x61 and 15) shl 2) or (0x6E shr 6)</text>
+  <text x="459" y="396" class="ms">46 = 0x6E and 63</text>
+  <text x="459" y="428" class="w">Bits never move: only the grouping changes,</text>
+  <text x="459" y="448" class="w">so the transform is exactly reversible.</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · ALPHABET LOOKUP</text>
+  <rect x="854" y="172" width="282" height="96" class="tint" />
+  <text x="870" y="198" class="ms">0 A .. 19 T .. 25 Z</text>
+  <text x="870" y="222" class="ms">26 a .. 46 u .. 51 z</text>
+  <text x="870" y="246" class="ms">52 0 .. 61 9, 62 +, 63 /</text>
+  <text x="854" y="296" class="m">19 22 5 46</text>
+  <rect x="854" y="308" width="282" height="36" class="chip" />
+  <text x="870" y="332" class="m">T  W  F  u   = "TWFu"</text>
+  <rect x="854" y="358" width="282" height="94" class="warn" />
+  <text x="870" y="382" class="w">base64url (section 5) keeps the bit maths</text>
+  <text x="870" y="402" class="w">and swaps 62 to "-" and 63 to "_".</text>
+  <text x="870" y="422" class="w">Unused low bits of the last symbol MUST</text>
+  <text x="870" y="442" class="w">be zero, or the encoding is non-canonical.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="565" y="500" class="ms">regroup</text>
+  <text x="965" y="500" class="ms">map, then pad</text>
+</svg>

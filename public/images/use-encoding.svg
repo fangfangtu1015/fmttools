@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">One value, four representations, and the filter that only sees one of them</title>
+  <desc id="d">Four panels left to right. The first shows a plain payload string. The second shows the same bytes as base64 and as percent-encoding, both still carrying the payload. The third shows a blocklist filter that inspects the raw text only and lets the encoded forms through. The fourth shows the receiving program decoding one layer and matching the blocklisted string after normalisation.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .bad { fill: #fef2f2; stroke: #fecaca; stroke-width: 1.5; rx: 10 }
+      .ok { fill: #f0fdf4; stroke: #bbf7d0; stroke-width: 1.5; rx: 10 }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">The filter and the program do not read the same bytes</text>
+  <text x="40" y="82" class="b">Encoding is reversible and key-free, so it changes what a string looks like without changing what it means.</text>
+
+  <!-- panel 1 -->
+  <rect x="40" y="112" width="260" height="360" class="card" />
+  <text x="60" y="150" class="k">1 · THE VALUE</text>
+  <rect x="60" y="170" width="220" height="120" class="tint" />
+  <text x="74" y="196" class="ms">' UNION SELECT</text>
+  <text x="74" y="218" class="ms">  table_name FROM</text>
+  <text x="74" y="240" class="ms">  information_schema</text>
+  <text x="74" y="266" class="ms">tables --</text>
+  <text x="60" y="312" class="ms">28 characters, 28 bytes.</text>
+  <text x="60" y="332" class="ms">US-ASCII, so both counts</text>
+  <text x="60" y="352" class="ms">are the same number here.</text>
+  <rect x="60" y="372" width="220" height="80" class="chip" />
+  <text x="74" y="396" class="ms">This is the form every</text>
+  <text x="74" y="416" class="ms">blocklist is written</text>
+  <text x="74" y="436" class="ms">against.</text>
+
+  <!-- panel 2 -->
+  <rect x="340" y="112" width="260" height="360" class="card" />
+  <text x="360" y="150" class="k">2 · SAME BYTES, OTHER FORMS</text>
+  <rect x="360" y="170" width="220" height="120" class="chip" />
+  <text x="374" y="194" class="ms">base64 (RFC 4648 §4)</text>
+  <text x="374" y="216" class="ms">JyBVTklPTiBTRUxF</text>
+  <text x="374" y="236" class="ms">Q1QgdGFibGVfbmFt</text>
+  <text x="374" y="256" class="ms">ZSBGUk9NIC4uLiAtLQ==</text>
+  <rect x="360" y="300" width="220" height="112" class="chip" />
+  <text x="374" y="324" class="ms">percent (RFC 3986 §2.1)</text>
+  <text x="374" y="346" class="ms">%27%20UNION%20SEL</text>
+  <text x="374" y="366" class="ms">ECT%20table%5Fname</text>
+  <text x="374" y="386" class="ms">%20FROM%20%2E%2E%2E</text>
+  <text x="360" y="436" class="ms">Neither form contains the</text>
+  <text x="360" y="456" class="ms">literal substring UNION.</text>
+
+  <!-- panel 3 -->
+  <rect x="640" y="112" width="260" height="360" class="card" />
+  <text x="660" y="150" class="k">3 · THE FILTER</text>
+  <rect x="660" y="170" width="220" height="76" class="ok" />
+  <text x="674" y="196" class="ms">raw text  →  match</text>
+  <text x="674" y="218" class="ms">blocked, 400</text>
+  <rect x="660" y="256" width="220" height="76" class="bad" />
+  <text x="674" y="282" class="ms">base64    →  no match</text>
+  <text x="674" y="304" class="ms">passed through</text>
+  <rect x="660" y="342" width="220" height="76" class="bad" />
+  <text x="674" y="368" class="ms">%4C%49%4B%45</text>
+  <text x="674" y="390" class="ms">→ no match, passed</text>
+  <rect x="660" y="428" width="220" height="44" class="warn" />
+  <text x="674" y="446" class="w">The filter reads one</text>
+  <text x="674" y="464" class="w">representation only.</text>
+
+  <!-- panel 4 -->
+  <rect x="940" y="112" width="220" height="360" class="card" />
+  <text x="960" y="150" class="k">4 · THE RECEIVER</text>
+  <rect x="960" y="170" width="180" height="96" class="tint" />
+  <text x="974" y="194" class="ms">decode one</text>
+  <text x="974" y="214" class="ms">layer, then</text>
+  <text x="974" y="234" class="ms">normalise,</text>
+  <text x="974" y="254" class="ms">then act.</text>
+  <rect x="960" y="276" width="180" height="96" class="bad" />
+  <text x="974" y="300" class="w">The decoded value now</text>
+  <text x="974" y="320" class="w">matches the blocklist</text>
+  <text x="974" y="340" class="w">the filter never saw.</text>
+  <text x="960" y="396" class="ms">Two layers decode</text>
+  <text x="960" y="416" class="ms">twice; the URL tool</text>
+  <text x="960" y="436" class="ms">flags that as double</text>
+  <text x="960" y="456" class="ms">encoding.</text>
+
+  <path d="M300 292 H340" class="arrow" />
+  <path d="M600 292 H640" class="arrow" />
+  <path d="M900 292 H940" class="arrow" />
+  <text x="60" y="502" class="ms">Same bytes, four readings. The gap between what a filter inspects and what a program acts on is where these bugs live.</text>
+</svg>

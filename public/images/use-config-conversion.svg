@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">What changes when a YAML configuration file is resolved into JSON</title>
+  <desc id="d">Three panels left to right: the YAML a human edits with comments, anchors, block scalars and unquoted scalars; the resolution step that applies the YAML 1.2 core schema and marks where a 1.1 reader would disagree; and the JSON a machine reads, with the features that have no equivalent listed as losses.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">Resolution, not translation</text>
+  <text x="40" y="82" class="b">A YAML to JSON pass picks a type for every unquoted scalar, expands what only YAML can express, and keeps the order you wrote unless the keys look like integers.</text>
+
+  <!-- panel 1: yaml -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · YAML IN THE REPO</text>
+  <rect x="64" y="172" width="282" height="212" class="tint" />
+  <text x="78" y="196" class="ms"># region for the eu team</text>
+  <text x="78" y="216" class="m">enabled: NO</text>
+  <text x="78" y="236" class="m">on: push</text>
+  <text x="78" y="256" class="m">image: 1.10</text>
+  <text x="78" y="276" class="m">mode: 0755</text>
+  <text x="78" y="296" class="m">cutoff: 12:30</text>
+  <text x="78" y="316" class="m">built: 2024-03-01</text>
+  <text x="78" y="336" class="m">base: &amp;defaults</text>
+  <text x="78" y="356" class="m">  replicas: 3</text>
+  <text x="78" y="376" class="m">prod: { &lt;&lt;: *defaults }</text>
+  <text x="64" y="410" class="ms">Indented with spaces, or</text>
+  <text x="64" y="430" class="ms">the parser stops early.</text>
+  <rect x="64" y="440" width="282" height="24" class="warn" />
+  <text x="78" y="457" class="w">Two spaces are load-bearing text</text>
+
+  <!-- panel 2: resolve -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · RESOLVE (1.2 CORE)</text>
+  <rect x="459" y="170" width="282" height="30" class="chip" />
+  <text x="472" y="190" class="ms">NO   string | 1.1 boolean false</text>
+  <rect x="459" y="206" width="282" height="30" class="chip" />
+  <text x="472" y="226" class="ms">on   string | 1.1 boolean true</text>
+  <rect x="459" y="242" width="282" height="30" class="chip" />
+  <text x="472" y="262" class="ms">1.10 float 1.1 | 1.1 float 1.1</text>
+  <rect x="459" y="278" width="282" height="30" class="chip" />
+  <text x="472" y="298" class="ms">0755 string | 1.1 int 493</text>
+  <rect x="459" y="314" width="282" height="30" class="chip" />
+  <text x="472" y="334" class="ms">12:30 string | 1.1 int 750</text>
+  <rect x="459" y="350" width="282" height="30" class="chip" />
+  <text x="472" y="370" class="ms">2024-03-01 string | timestamp</text>
+  <rect x="459" y="392" width="282" height="70" class="warn" />
+  <text x="472" y="412" class="w">The right column is what a</text>
+  <text x="472" y="430" class="w">PyYAML or libyaml build does</text>
+  <text x="472" y="448" class="w">to the same bytes, today.</text>
+  <text x="459" y="482" class="ms">Both columns are reported per line.</text>
+
+  <!-- panel 3: json -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · JSON THE API READS</text>
+  <rect x="854" y="170" width="282" height="214" class="tint" />
+  <text x="868" y="192" class="m">{</text>
+  <text x="868" y="212" class="m">  "enabled": "NO",</text>
+  <text x="868" y="232" class="m">  "on": "push",</text>
+  <text x="868" y="252" class="m">  "image": 1.1,</text>
+  <text x="868" y="272" class="m">  "mode": "0755",</text>
+  <text x="868" y="292" class="m">  "cutoff": "12:30",</text>
+  <text x="868" y="312" class="m">  "built": "2024-03-01",</text>
+  <text x="868" y="332" class="m">  "base": { "replicas": 3 },</text>
+  <text x="868" y="352" class="m">  "prod": { "replicas": 3 }</text>
+  <text x="868" y="372" class="m">}</text>
+  <rect x="854" y="392" width="282" height="76" class="warn" />
+  <text x="868" y="412" class="w">Gone: the comment, the anchor, the</text>
+  <text x="868" y="430" class="w">merge key, the block scalar header.</text>
+  <text x="868" y="448" class="w">Expanded: *defaults into real text.</text>
+  <text x="868" y="464" class="w">Reordered: integer-like keys first.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="384" y="500" class="ms">parse</text>
+  <text x="782" y="500" class="ms">serialise</text>
+</svg>

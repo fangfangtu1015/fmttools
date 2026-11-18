@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title id="t">A fixture set of boundary values and where each one breaks</title>
+  <desc id="d">Three panels: a column of deliberately awkward values such as an empty string, a null, an absent key, an integer above two to the fifty-third power, a control character and a right-to-left override; a middle panel showing the three places a fixture is read, the JSON parser, the serializer and the spreadsheet; and a right panel showing the assertion each value should drive.</desc>
+  <defs>
+    <style>
+      .h { font: 700 30px/1 inherit; fill: #0f172a }
+      .k { font: 700 15px/1 inherit; fill: #1d4ed8; letter-spacing: .08em }
+      .b { font: 400 16px/1 inherit; fill: #334155 }
+      .m { font: 500 15px/1 inherit; fill: #0f172a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .ms { font: 500 13px/1 inherit; fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace }
+      .w { font: 700 13px/1 inherit; fill: #b45309 }
+      .card { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; rx: 14 }
+      .chip { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; rx: 8 }
+      .tint { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10 }
+      .warn { fill: #fffbeb; stroke: #fde68a; stroke-width: 1.5; rx: 10 }
+      .line { stroke: #cbd5e1; stroke-width: 2; fill: none }
+      .arrow { stroke: #94a3b8; stroke-width: 2.5; fill: none; marker-end: url(#ah) }
+    </style>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="540" fill="#f8fafc" />
+
+  <text x="40" y="52" class="h">Fixtures are boundary values on purpose</text>
+  <text x="40" y="82" class="b">Every row below has already failed somewhere. The point of the fixture is that the failure is reproducible on your machine, on Monday, with a name.</text>
+
+  <!-- stage 1 -->
+  <rect x="40" y="112" width="330" height="360" class="card" />
+  <text x="64" y="152" class="k">1 · THE VALUE SET</text>
+  <rect x="64" y="170" width="282" height="212" class="tint" />
+  <text x="80" y="194" class="ms">""    null    (absent)</text>
+  <text x="80" y="216" class="ms">0     -0      false</text>
+  <text x="80" y="238" class="ms">NaN   Infinity  .inf</text>
+  <text x="80" y="260" class="ms">9007199254740993</text>
+  <text x="80" y="282" class="ms">19.990    1.10    1E+3</text>
+  <text x="80" y="304" class="ms">"a\u0000b"  "‮bad"  "👩‍💻"</text>
+  <text x="80" y="326" class="ms">"he said \"hi\""  "\\ back"</text>
+  <text x="80" y="348" class="ms">"id" twice in one object</text>
+  <text x="80" y="372" class="ms">201 levels of nesting</text>
+  <rect x="64" y="396" width="282" height="56" class="warn" />
+  <text x="80" y="418" class="w">One value per case, one name</text>
+  <text x="80" y="438" class="w">per case, in one file.</text>
+
+  <!-- stage 2 -->
+  <rect x="435" y="112" width="330" height="360" class="card" />
+  <text x="459" y="152" class="k">2 · WHERE IT BREAKS</text>
+  <rect x="459" y="170" width="282" height="86" class="chip" />
+  <text x="473" y="192" class="ms">parse</text>
+  <text x="473" y="214" class="ms">NaN is not a value;</text>
+  <text x="473" y="234" class="ms">raw U+0000 must be escaped;</text>
+  <text x="473" y="252" class="ms">202 levels exceeds depth 200.</text>
+  <rect x="459" y="266" width="282" height="86" class="chip" />
+  <text x="473" y="288" class="ms">serialise</text>
+  <text x="473" y="310" class="ms">17th digit of an id is lost;</text>
+  <text x="473" y="330" class="ms">19.990 becomes 19.99;</text>
+  <text x="473" y="350" class="ms">the last duplicate key wins.</text>
+  <rect x="459" y="362" width="282" height="90" class="chip" />
+  <text x="473" y="384" class="ms">load into a spreadsheet</text>
+  <text x="473" y="406" class="ms">00710-1234 loses its zero;</text>
+  <text x="473" y="426" class="ms">a leading = is executed;</text>
+  <text x="473" y="446" class="ms">19.990 is re-typed as 19.99.</text>
+
+  <!-- stage 3 -->
+  <rect x="830" y="112" width="330" height="360" class="card" />
+  <text x="854" y="152" class="k">3 · THE ASSERTION</text>
+  <text x="854" y="180" class="ms">absent ≠ null ≠ ""</text>
+  <text x="854" y="200" class="ms">assert on has(), not on truthiness</text>
+  <text x="854" y="226" class="ms">unsafe integer</text>
+  <text x="854" y="246" class="ms">compare as text, never as a number</text>
+  <text x="854" y="272" class="ms">empty CSV cell</text>
+  <text x="854" y="292" class="ms">decodes to null: pin the option</text>
+  <text x="854" y="318" class="ms">duplicate key</text>
+  <text x="854" y="338" class="ms">assert the warning, not the value</text>
+  <text x="854" y="364" class="ms">bidi override, U+0000</text>
+  <text x="854" y="384" class="ms">assert code points, not glyphs</text>
+  <rect x="854" y="400" width="282" height="52" class="warn" />
+  <text x="868" y="422" class="w">A fixture that only proves</text>
+  <text x="868" y="442" class="w">"no crash" proves nothing.</text>
+
+  <path d="M370 292 H435" class="arrow" />
+  <path d="M765 292 H830" class="arrow" />
+  <text x="40" y="508" class="ms">value → place it fails → the assertion that documents the failure. Keep all three in the same file.</text>
+</svg>

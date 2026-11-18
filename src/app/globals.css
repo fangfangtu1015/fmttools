@@ -1,0 +1,170 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 226 71% 44%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 210 40% 94%;
+    --accent-foreground: 222 47% 15%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 88%;
+    --input: 214 32% 84%;
+    --ring: 226 71% 44%;
+    --radius: 0.625rem;
+    --code-bg: 222 47% 12%;
+    --code-fg: 210 40% 96%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-sans);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  :target {
+    scroll-margin-top: 6rem;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.16);
+  }
+
+  textarea,
+  input,
+  select,
+  button {
+    font: inherit;
+  }
+
+  code,
+  pre,
+  samp,
+  output {
+    font-family: var(--font-mono);
+    font-feature-settings: 'liga' 0;
+  }
+}
+
+@layer components {
+  .prose-ct {
+    @apply text-[1.0625rem] leading-[1.75] text-slate-700;
+  }
+
+  .prose-ct > * + * {
+    @apply mt-5;
+  }
+
+  .prose-ct > ul > li + li,
+  .prose-ct > ol > li + li {
+    @apply mt-2.5;
+  }
+
+  .prose-ct h2 {
+    @apply mt-12 mb-4 text-[1.6rem] font-bold tracking-tight text-slate-900;
+  }
+
+  .prose-ct h3 {
+    @apply mt-9 mb-3 text-[1.275rem] font-bold text-slate-900;
+  }
+
+  .prose-ct h4 {
+    @apply mt-7 mb-2 text-[1.075rem] font-semibold text-slate-900;
+  }
+
+  .prose-ct a {
+    @apply font-medium text-blue-700 underline decoration-blue-300 underline-offset-2 transition hover:decoration-blue-600;
+  }
+
+  .prose-ct ul {
+    @apply list-disc space-y-2 pl-5 marker:text-slate-400;
+  }
+
+  .prose-ct ol {
+    @apply list-decimal space-y-2 pl-5 marker:text-slate-400;
+  }
+
+  .prose-ct :not(pre) > code {
+    @apply rounded bg-slate-100 px-1.5 py-0.5 text-[0.875em] font-medium text-slate-800 ring-1 ring-slate-200;
+  }
+
+  .prose-ct pre {
+    @apply my-6 overflow-x-auto rounded-xl bg-code-bg p-4 text-[0.8125rem] leading-6 text-code-fg ring-1 ring-slate-900/10;
+  }
+
+  .prose-ct pre code {
+    @apply bg-transparent p-0 text-inherit ring-0;
+  }
+
+  .prose-ct blockquote {
+    @apply border-l-4 border-blue-200 bg-blue-50/60 py-2 pl-4 pr-3 italic text-slate-700;
+  }
+
+  .prose-ct table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .prose-ct strong {
+    @apply font-semibold text-slate-900;
+  }
+
+  .grid-card {
+    @apply rounded-xl border border-slate-200 bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition hover:border-slate-300 hover:shadow-md;
+  }
+
+  .skip-link {
+    @apply absolute left-3 top-3 z-50 -translate-y-16 rounded-md bg-blue-700 px-3 py-2 text-sm font-semibold text-white transition focus:translate-y-0;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.6);
+    border-radius: 9999px;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
