@@ -9,8 +9,7 @@ export const SITE = {
 } as const
 
 export function absolute(path: string) {
-  const withSlash = path === '/' ? '' : path.endsWith('/') ? path : `${path}/`
-  return `${SITE.url}${withSlash}`
+  return `${SITE.url}${path.endsWith('/') ? path : `${path}/`}`
 }
 
 /** Asset URLs keep their extension: trailingSlash only applies to pages. */
