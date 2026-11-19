@@ -189,7 +189,7 @@ export function OutputPane({
       <pre
         aria-label={`${label} output`}
         className="scrollbar-thin min-h-[13rem] flex-1 overflow-auto whitespace-pre bg-white px-3.5 py-3 text-[0.8125rem] leading-6 text-slate-900"
-        style={{ maxHeight: `${rows * 1.5 + 2}rem` }}
+        style={{ maxHeight: '70vh' }}
       >
         {value ? body : <span className="text-slate-400">The converted result appears here. Nothing is uploaded — conversion happens in this tab.</span>}
       </pre>
